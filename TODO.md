@@ -1,0 +1,1 @@
+- as a user, I shall be able to upload a sc2 build order text snippet

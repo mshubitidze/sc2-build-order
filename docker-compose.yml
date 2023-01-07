@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: db
+
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgressql
+
+volumes:
+  db:
+
