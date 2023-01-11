@@ -27,12 +27,22 @@ export const buildsRouter = createTRPCRouter({
       });
       return build;
     }),
-  getBuildsByMatchup: publicProcedure
+  getBuildsByMatchUp: publicProcedure
     .input(z.object({ matchUp: z.string() }))
     .query(async ({ ctx, input }) => {
       const build = await ctx.prisma.buildOrder.findMany({
         where: {
           matchUp: input.matchUp,
+        },
+      });
+      return build;
+    }),
+  getBuildById: publicProcedure
+    .input(z.object({ buildId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const build = await ctx.prisma.buildOrder.findUnique({
+        where: {
+          id: input.buildId,
         },
       });
       return build;

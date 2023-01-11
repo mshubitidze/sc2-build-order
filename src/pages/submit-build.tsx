@@ -3,11 +3,14 @@ import Head from "next/head";
 import { api } from "../utils/api";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { buildTypes } from "./races/[raceName]/match-ups/[opponentRace]";
+
+export const matchUps = ["ZvT", "ZvP", "ZvZ", "PvT", "PvP", "PvZ", "TvT", "TvP", "TvZ"];
 
 const SubmitBuild: NextPage = () => {
   const createBuildOrderMutation = api.builds.createBuild.useMutation();
 
-  const [matchUp, setMatchUp] = useState("ZvT");
+  const [matchUp, setMatchUp] = useState("zvt");
   const [build, setBuildOrder] = useState("");
   const [style, setStyle] = useState("cheese");
   const [author, setAuthor] = useState("");
@@ -36,8 +39,8 @@ const SubmitBuild: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex min-h-screen flex-col items-center justify-center gap-8 text-black dark:bg-gray-800 dark:text-white">
-        <h1 className="pb-14 text-4xl">Submit a Build Order</h1>
+      <main className="flex min-h-screen flex-col items-center justify-center gap-16 py-12 text-black dark:bg-gray-800 dark:text-white">
+        <h1 className="text-4xl">Submit a Build Order</h1>
         <form className="flex w-3/4 flex-col gap-4 pb-10 sm:pb-0" onSubmit={handleSubmitBuildOrder}>
           <div className="flex flex-row justify-start gap-8">
             <fieldset className="flex flex-col gap-2 self-center">
@@ -54,15 +57,11 @@ const SubmitBuild: NextPage = () => {
                 required
                 id="match-up-select"
               >
-                <option value="zvt">ZvT</option>
-                <option value="zvp">ZvP</option>
-                <option value="zvz">ZvZ</option>
-                <option value="pvt">PvT</option>
-                <option value="pvp">PvP</option>
-                <option value="pvz">PvZ</option>
-                <option value="tvt">TvT</option>
-                <option value="tvp">TvP</option>
-                <option value="tvz">TvZ</option>
+                {matchUps.map((matchUp) => (
+                  <option key={matchUp} value={matchUp.toLowerCase()}>
+                    {matchUp}
+                  </option>
+                ))}
               </select>
             </fieldset>
             <fieldset className="flex flex-col gap-2 self-center">
@@ -76,10 +75,11 @@ const SubmitBuild: NextPage = () => {
                 required
                 id="style"
               >
-                <option value="cheese">Cheese</option>
-                <option value="all in">All In</option>
-                <option value="macro">Macro</option>
-                <option value="timing attack">Timing Attack</option>
+                {buildTypes.map((buildType) => (
+                  <option key={buildType} value={buildType}>
+                    {buildType}
+                  </option>
+                ))}
               </select>
             </fieldset>
             <fieldset className="flex w-1/2 flex-col gap-2 self-center">

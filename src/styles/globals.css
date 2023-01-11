@@ -6,3 +6,7 @@
 .link {
   @apply text-black hover:text-blue-100 hover:underline dark:text-blue-300;
 }
+
+body {
+  @apply bg-gray-800
+}
