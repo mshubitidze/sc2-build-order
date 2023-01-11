@@ -7,8 +7,12 @@ import { useRouter } from "next/router";
 const SubmitBuild: NextPage = () => {
   const createBuildOrderMutation = api.builds.createBuild.useMutation();
 
-  const [matchUp, setMatchUp] = useState("zvt");
+  const [matchUp, setMatchUp] = useState("ZvT");
   const [build, setBuildOrder] = useState("");
+  const [style, setStyle] = useState("cheese");
+  const [author, setAuthor] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const router = useRouter();
 
   const handleSubmitBuildOrder = async (e: React.FormEvent) => {
@@ -16,6 +20,10 @@ const SubmitBuild: NextPage = () => {
     await createBuildOrderMutation.mutateAsync({
       matchUp,
       build,
+      style,
+      author,
+      title,
+      description,
     });
     router.push("/");
   };
@@ -29,35 +37,106 @@ const SubmitBuild: NextPage = () => {
       </Head>
 
       <main className="flex min-h-screen flex-col items-center justify-center gap-8 text-black dark:bg-gray-800 dark:text-white">
-        <h1>Submit a Build Order</h1>
-        <form className="flex flex-col gap-4" onSubmit={handleSubmitBuildOrder}>
-          <label htmlFor="match-up-select">Match Up</label>
+        <h1 className="pb-14 text-4xl">Submit a Build Order</h1>
+        <form className="flex w-3/4 flex-col gap-4 pb-10 sm:pb-0" onSubmit={handleSubmitBuildOrder}>
+          <div className="flex flex-row justify-start gap-8">
+            <fieldset className="flex flex-col gap-2 self-center">
+              <label
+                className="text-sm font-medium text-gray-900 dark:text-white"
+                htmlFor="match-up-select"
+              >
+                Match Up
+              </label>
 
-          <select
-            className="text-black"
-            value={matchUp}
-            onChange={(e) => setMatchUp(e.target.value)}
-            required
-            id="match-up-select"
-          >
-            <option value="zvt">ZvT</option>
-            <option value="zvp">ZvP</option>
-            <option value="zvz">ZvZ</option>
-            <option value="pvt">PvT</option>
-            <option value="pvp">PvP</option>
-            <option value="pvz">PvZ</option>
-            <option value="tvt">TvT</option>
-            <option value="tvp">TvP</option>
-            <option value="tvz">TvZ</option>
-          </select>
+              <select
+                className="w-auto rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                onChange={(e) => setMatchUp(e.target.value)}
+                required
+                id="match-up-select"
+              >
+                <option value="zvt">ZvT</option>
+                <option value="zvp">ZvP</option>
+                <option value="zvz">ZvZ</option>
+                <option value="pvt">PvT</option>
+                <option value="pvp">PvP</option>
+                <option value="pvz">PvZ</option>
+                <option value="tvt">TvT</option>
+                <option value="tvp">TvP</option>
+                <option value="tvz">TvZ</option>
+              </select>
+            </fieldset>
+            <fieldset className="flex flex-col gap-2 self-center">
+              <label className="text-sm font-medium text-gray-900 dark:text-white" htmlFor="style">
+                Style
+              </label>
 
-          <textarea
-            required
-            className="p-2 text-black"
-            value={build}
-            onChange={(e) => setBuildOrder(e.target.value)}
-          />
-          <button className="rounded-sm bg-white p-2 text-black">submit</button>
+              <select
+                className="w-auto rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                onChange={(e) => setStyle(e.target.value)}
+                required
+                id="style"
+              >
+                <option value="cheese">Cheese</option>
+                <option value="all in">All In</option>
+                <option value="macro">Macro</option>
+                <option value="timing attack">Timing Attack</option>
+              </select>
+            </fieldset>
+            <fieldset className="flex w-1/2 flex-col gap-2 self-center">
+              <label htmlFor="author" className="text-sm font-medium text-gray-900 dark:text-white">
+                Author
+              </label>
+              <input
+                onChange={(e) => setAuthor(e.target.value)}
+                type="text"
+                id="author"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              />
+            </fieldset>
+            <fieldset className="flex w-1/2 flex-col gap-2 self-center">
+              <label htmlFor="title" className="text-sm font-medium text-gray-900 dark:text-white">
+                Title
+              </label>
+              <input
+                onChange={(e) => setTitle(e.target.value)}
+                type="text"
+                id="title"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              />
+            </fieldset>
+          </div>
+          <fieldset className="flex w-full flex-col gap-2 self-center">
+            <label
+              htmlFor="description"
+              className="text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Description
+            </label>
+            <textarea
+              onChange={(e) => setDescription(e.target.value)}
+              value={description}
+              id="description"
+              className="h-20 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            ></textarea>
+          </fieldset>
+          <fieldset className="w-full">
+            <label
+              htmlFor="build"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Your Build
+            </label>
+            <textarea
+              required
+              value={build}
+              onChange={(e) => setBuildOrder(e.target.value)}
+              id="build"
+              className="h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            />
+          </fieldset>
+          <button className="w-1/2 self-center rounded-lg border border-blue-700 px-5 py-2.5 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-600 dark:hover:text-white dark:focus:ring-blue-800">
+            Submit
+          </button>
         </form>
       </main>
     </>

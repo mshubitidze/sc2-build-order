@@ -1,16 +1,58 @@
+import { BuildOrder } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { api } from "../../../../../utils/api";
 
-const MatchUps: NextPage = () => {
+function BuildCard({ build }: { build: BuildOrder }) {
+  return (
+    <div className="flex flex-row items-center justify-between gap-8 rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
+      <h5 className="whitespace-nowrap text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        {build.title}
+      </h5>
+      <p className="font-normal text-gray-700 dark:text-gray-400">
+        <span className="whitespace-nowrap rounded border border-red-400 px-2.5 py-1 text-sm font-medium text-red-800 dark:bg-gray-700 dark:text-red-400">
+          Style: {build.style}
+        </span>
+      </p>
+      <p className="font-normal text-gray-700 dark:text-gray-400">
+        <span className="whitespace-nowrap rounded border border-blue-400 bg-blue-100 px-2.5 py-1 text-sm font-medium text-blue-800 dark:bg-gray-700 dark:text-blue-400">
+          Author: {build.author}
+        </span>
+      </p>
+      <p className="text-left">{build.description}</p>
+      <Link
+        href="#"
+        className="flex place-content-center items-center justify-self-center whitespace-nowrap rounded-lg bg-blue-700 px-8 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >
+        View Build
+          <svg
+            aria-hidden="true"
+            className="ml-2 -mr-1 h-4 w-4"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+      </Link>
+    </div>
+  );
+}
+
+const FindBuilds: NextPage = () => {
   const { raceName, opponentRace } = useRouter().query as {
     raceName: string;
     opponentRace: string;
   };
 
   const builds = api.builds.getBuildsByMatchup.useQuery({
-    matchUp: `${raceName.toLowerCase().charAt(0)}v${opponentRace.toLowerCase().charAt(0)}`,
+    matchUp: `${raceName?.toLowerCase().charAt(0)}v${opponentRace?.toLowerCase().charAt(0)}`,
   });
 
   return (
@@ -21,32 +63,20 @@ const MatchUps: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex min-h-screen flex-col items-center justify-center gap-8 text-black dark:bg-gray-800 dark:text-white">
-        <section className="flex flex-col gap-4 text-center">
-          <h1>{raceName}</h1>
-          <p>VS.</p>
-          <p>{opponentRace}</p>
-        </section>
-
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Match Up</th>
-              <th>Build</th>
-            </tr>
-          </thead>
+      <main className="flex min-h-screen flex-col items-center justify-center text-black dark:bg-gray-800 dark:text-white">
+        <h1>
+          {raceName} VS. {opponentRace}
+        </h1>
+        <div className="flex w-full flex-col items-center gap-8 p-10">
           {builds.data?.map((build) => (
-            <tr key={build.id}>
-              <td>{build.id}</td>
-              <td>{build.matchUp}</td>
-              <td>{build.build}</td>
-            </tr>
+            <div key={build.id}>
+              <BuildCard key={build.id} build={build} />
+            </div>
           ))}
-        </table>
+        </div>
       </main>
     </>
   );
 };
 
-export default MatchUps;
+export default FindBuilds;
