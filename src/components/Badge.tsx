@@ -8,13 +8,7 @@ export enum Variant {
   Primary = "primary",
 }
 
-export const Badge = ({
-  variant,
-  text,
-}: {
-  variant: Variant;
-  text: string;
-}) => {
+export const Badge = ({ variant, text }: { variant: Variant; text: string }) => {
   const styles = {
     danger: "text-red-800 bg-red-100",
     success: "text-green-800 bg-green-100",
@@ -24,10 +18,7 @@ export const Badge = ({
 
   return (
     <span
-      className={classNames(
-        "mr-2 rounded px-2.5 py-0.5 text-xs font-semibold",
-        styles[variant]
-      )}
+      className={classNames("mr-2 rounded px-2.5 py-0.5 text-xs font-semibold", styles[variant])}
     >
       {text}
     </span>

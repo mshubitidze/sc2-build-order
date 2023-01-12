@@ -4,7 +4,10 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Badge, Variant } from "../../../../../components/Badge";
+import { Variant, Badge } from "../../../../../components/Badge";
+import { Form } from "../../../../../components/Form";
+import { Input } from "../../../../../components/Input";
+import { Label } from "../../../../../components/Label";
 import { api } from "../../../../../utils/api";
 
 export const macroBuildType = "macro";
@@ -23,25 +26,25 @@ function BuildCard({ build }: { build: BuildOrder }) {
     }[build.style] ?? Variant.Primary;
 
   return (
-    <div className="flex max-w-sm flex-col justify-between rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
-      <Link href="#">
+    <div className="max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
+      <a href="#">
         <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           {build.title}
         </h5>
-      </Link>
-      <p className="mb-3 flex max-w-sm gap-2 font-normal text-gray-700 dark:text-gray-400">
-        {build.description?.substring(0, 100).trim() + "..."}
+      </a>
+      <p className="mb-3 flex gap-2 font-normal text-gray-700 dark:text-gray-400">
+        {build.description?.substring(0, 100) + "..."}
       </p>
-      <p className="mb-3 flex items-center gap-2 font-normal text-gray-700 dark:text-gray-400">
+      <p className="mb-3 flex gap-2 font-normal text-gray-700 dark:text-gray-400">
         <b>Style</b>
-        <Badge variant={badgeVariant} text={build.style} />
+        <Badge text={build.style} variant={badgeVariant} />
       </p>
       <p className="mb-3 flex gap-2 font-normal text-gray-700 dark:text-gray-400">
         Created by {" " + build.author}
       </p>
       <Link
         href={`/builds/${build.id}`}
-        className="inline-flex w-fit items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        className="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         View Build
         <svg
@@ -62,10 +65,12 @@ function BuildCard({ build }: { build: BuildOrder }) {
   );
 }
 
-const FindBuilds: NextPage = () => {
+const FindBuildsPage: NextPage = () => {
   const [selectedBuildType, setSelectedBuildType] = useState(buildTypes[0]);
   const router = useRouter();
-  const { opponentRace = "", raceName = "" } = router.query as {
+  const [search, setSearch] = useState("");
+
+  const { opponentRace = "", raceName = "" } = useRouter().query as {
     opponentRace: string;
     raceName: string;
   };
@@ -84,8 +89,17 @@ const FindBuilds: NextPage = () => {
     builds.refetch();
   }, [router.isReady, builds]);
 
-  const filteredBuilds = (builds.data ?? []).filter((build) => build.style === selectedBuildType);
+  const lowerCaseSearch = search.toLocaleLowerCase();
 
+  const filteredBuilds = (builds.data ?? [])
+    .filter((build) => (selectedBuildType === "all" ? true : build.style === selectedBuildType))
+    .filter((build) =>
+      lowerCaseSearch !== ""
+        ? ["author", "title", "description"].some((key) =>
+            ((build as Record<string, string>)[key] ?? "").toLowerCase().includes(lowerCaseSearch)
+          )
+        : true
+    );
 
   return (
     <>
@@ -99,53 +113,62 @@ const FindBuilds: NextPage = () => {
         <h1 className="text-4xl text-white">
           {raceName} vs {opponentRace}
         </h1>
+        <div className="flex gap-12">
+          <Form className="w-1/4">
+            <fieldset>
+              <Label htmlFor="search">Filter (by name, author, or description)</Label>
+              <Input id="search" value={search} onChange={(e) => setSearch(e.target.value)} />
+            </fieldset>
 
-        <fieldset className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-900 dark:text-white" htmlFor="style">
-            Build Style
-          </label>
-          <ul className="w-ful items-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:flex">
-            {buildTypes?.map((buildType, idx, arr) => {
-              const style =
-                idx == arr.length - 1
-                  ? "w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0"
-                  : "w-full border-b border-gray-200 dark:border-gray-600 sm:border-b-0 sm:border-r";
+            <fieldset>
+              <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                Build Type
+              </label>
+              <ul className="items-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                {["all", ...buildTypes].map((buildType, idx, arr) => (
+                  <li
+                    key={buildType}
+                    className={
+                      idx === arr.length - 1
+                        ? "border-gray-200 dark:border-gray-600"
+                        : "border-b border-gray-200 dark:border-gray-600 sm:border-b"
+                    }
+                  >
+                    <div className="flex items-center pl-3">
+                      <input
+                        id={`build-radio-${buildType}`}
+                        type="radio"
+                        value={buildType}
+                        name="list-radio"
+                        checked={buildType === selectedBuildType}
+                        className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:ring-offset-gray-700 dark:focus:ring-blue-600"
+                        onChange={(e) => setSelectedBuildType(e.target.value)}
+                      />
+                      <label
+                        htmlFor={`build-radio-${buildType}`}
+                        className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        {buildType}
+                      </label>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </fieldset>
+          </Form>
 
-              return (
-                <li key={buildType} className={style}>
-                  <div className="flex items-center pl-3">
-                    <input
-                      id={`build-radio-${buildType.split(" ").join("-")}`}
-                      type="radio"
-                      value={buildType}
-                      name="list-radio"
-                      className="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:ring-offset-gray-700 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-700"
-                      onChange={(e) => setSelectedBuildType(e.target.value)}
-                    />
-                    <label
-                      htmlFor={`build-radio-${buildType.split(" ").join("-")}`}
-                      className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      {buildType
-                        .split(" ")
-                        .map((x) => x.charAt(0).toUpperCase() + x.slice(1))
-                        .join(" ")}
-                    </label>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </fieldset>
-
-        <section className="grid grid-cols-3 gap-4">
-          {filteredBuilds?.map((build) => (
-            <BuildCard key={build.id} build={build} />
-          ))}
-        </section>
+          <section className="flex w-full flex-col gap-4">
+            <h2 className="text-2xl text-white">Matching Builds</h2>
+            <section className="grid grid-cols-3 gap-4">
+              {filteredBuilds.map((build) => (
+                <BuildCard key={build.id} build={build} />
+              ))}
+            </section>
+          </section>
+        </div>
       </main>
     </>
   );
 };
 
-export default FindBuilds;
+export default FindBuildsPage;
