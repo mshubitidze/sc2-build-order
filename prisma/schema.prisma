@@ -69,8 +69,8 @@ model BuildOrder {
   id          String @id @default(cuid())
   matchUp     String
   build       String
-  style       String @default("macro")
+  style       String @default("Macro")
   author      String @default("Anonymous")
-  title       String @default("Unknown")
+  title       String @default("No Title")
   description String @default("No Description")
 }

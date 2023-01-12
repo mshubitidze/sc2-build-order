@@ -26,25 +26,27 @@ function BuildCard({ build }: { build: BuildOrder }) {
     }[build.style] ?? Variant.Primary;
 
   return (
-    <div className="max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
-      <a href="#">
-        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-          {build.title}
-        </h5>
-      </a>
-      <p className="mb-3 flex gap-2 font-normal text-gray-700 dark:text-gray-400">
-        {build.description?.substring(0, 100) + "..."}
-      </p>
-      <p className="mb-3 flex gap-2 font-normal text-gray-700 dark:text-gray-400">
-        <b>Style</b>
-        <Badge text={build.style} variant={badgeVariant} />
-      </p>
-      <p className="mb-3 flex gap-2 font-normal text-gray-700 dark:text-gray-400">
-        Created by {" " + build.author}
-      </p>
+    <div className="flex max-w-sm flex-col justify-between rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
+      <div>
+        <a href="#">
+          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            {build.title}
+          </h5>
+        </a>
+        <p className="mb-3 flex gap-2 font-normal text-gray-700 dark:text-gray-400">
+          {build.description?.substring(0, 100) + "..."}
+        </p>
+        <p className="mb-3 flex items-center gap-2 font-normal text-gray-700 dark:text-gray-400">
+          <b>Style</b>
+          <Badge text={build.style} variant={badgeVariant} />
+        </p>
+        <p className="mb-3 flex gap-2 font-normal text-gray-700 dark:text-gray-400">
+          Created by {" " + build.author}
+        </p>
+      </div>
       <Link
         href={`/builds/${build.id}`}
-        className="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        className="inline-flex w-fit items-center whitespace-nowrap rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         View Build
         <svg
@@ -65,8 +67,14 @@ function BuildCard({ build }: { build: BuildOrder }) {
   );
 }
 
+export const capitalize = (s: string) =>
+  s
+    .split(" ")
+    .map((x) => x.charAt(0).toUpperCase() + x.slice(1))
+    .join(" ");
+
 const FindBuildsPage: NextPage = () => {
-  const [selectedBuildType, setSelectedBuildType] = useState(buildTypes[0]);
+  const [selectedBuildType, setSelectedBuildType] = useState("all");
   const router = useRouter();
   const [search, setSearch] = useState("");
 
@@ -109,14 +117,14 @@ const FindBuildsPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container m-auto flex flex-col gap-8 bg-gray-800 pt-12">
+      <main className="container m-8 flex flex-col gap-8 bg-gray-800 pt-12 md:m-auto">
         <h1 className="text-4xl text-white">
-          {raceName} vs {opponentRace}
+          {capitalize(raceName)} vs {capitalize(opponentRace)}
         </h1>
         <div className="flex gap-12">
           <Form className="w-1/4">
             <fieldset>
-              <Label htmlFor="search">Filter (by name, author, or description)</Label>
+              <Label htmlFor="search">Search (By Name, Author, or Description)</Label>
               <Input id="search" value={search} onChange={(e) => setSearch(e.target.value)} />
             </fieldset>
 
@@ -148,7 +156,7 @@ const FindBuildsPage: NextPage = () => {
                         htmlFor={`build-radio-${buildType}`}
                         className="ml-2 w-full py-3 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        {buildType}
+                        {capitalize(buildType)}
                       </label>
                     </div>
                   </li>
@@ -159,7 +167,7 @@ const FindBuildsPage: NextPage = () => {
 
           <section className="flex w-full flex-col gap-4">
             <h2 className="text-2xl text-white">Matching Builds</h2>
-            <section className="grid grid-cols-3 gap-4">
+            <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredBuilds.map((build) => (
                 <BuildCard key={build.id} build={build} />
               ))}

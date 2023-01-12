@@ -3,8 +3,8 @@ import Head from "next/head";
 import { api } from "../utils/api";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { buildTypes } from "./races/[raceName]/match-ups/[opponentRace]";
-import { Form } from "../components/Form"
+import { buildTypes, capitalize } from "./races/[raceName]/match-ups/[opponentRace]";
+import { Form } from "../components/Form";
 
 export const matchUps = ["ZvT", "ZvP", "ZvZ", "PvT", "PvP", "PvZ", "TvT", "TvP", "TvZ"];
 
@@ -42,7 +42,7 @@ const SubmitBuild: NextPage = () => {
 
       <main className="flex min-h-screen flex-col items-center justify-center gap-16 py-12 text-black dark:bg-gray-800 dark:text-white">
         <h1 className="text-4xl">Submit a Build Order</h1>
-        <Form onSubmit={handleSubmitBuildOrder}>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmitBuildOrder}>
           <div className="flex flex-row justify-start gap-8">
             <fieldset className="flex flex-col gap-2 self-center">
               <label
@@ -76,9 +76,9 @@ const SubmitBuild: NextPage = () => {
                 required
                 id="style"
               >
-                {buildTypes.filter(x => x !== "all").map((buildType) => (
+                {buildTypes.map((buildType) => (
                   <option key={buildType} value={buildType}>
-                    {buildType.charAt(0).toUpperCase() + buildType.slice(1)}
+                    {capitalize(buildType)}
                   </option>
                 ))}
               </select>
@@ -138,7 +138,7 @@ const SubmitBuild: NextPage = () => {
           <button className="w-1/2 self-center rounded-lg border border-blue-700 px-5 py-2.5 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-600 dark:hover:text-white dark:focus:ring-blue-800">
             Submit
           </button>
-        </Form>
+        </form>
       </main>
     </>
   );
