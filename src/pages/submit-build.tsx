@@ -17,9 +17,44 @@ type TStep = {
 const units: Record<races, TStep[]> = {
   z: [
     {
-      name: "Drone",
+      name: "drone",
       supply: 1,
     },
+    {
+      name: "zergling",
+      supply: 1,
+    },
+    {
+      name: "roach",
+      supply: 2,
+    },
+    {
+      name: "overlord",
+      supply: 0,
+    },
+    {
+      name: "infestor",
+      supply: 2,
+    },
+    {
+      name: "ultralisk",
+      supply: 6,
+    },
+    {
+      name: "baneling",
+      supply: 0,
+    },
+    {
+      name: "queen",
+      supply: 2,
+    },
+    { name: "hydralisk", supply: 2 },
+    { name: "mutalisk", supply: 2 },
+    { name: "corruptor", supply: 2 },
+    { name: "swarm host", supply: 3 },
+    { name: "viper", supply: 3 },
+    { name: "brood lord", supply: 2 },
+    { name: "overseer", supply: 0 },
   ],
   p: [],
   t: [],
@@ -28,16 +63,68 @@ const units: Record<races, TStep[]> = {
 const structures: Record<races, TStep[]> = {
   z: [
     {
-      name: "Spawning Pool",
+      name: "spawning pool",
       supply: -1,
     },
     {
-      name: "Extractor",
+      name: "extractor",
       supply: -1,
     },
     {
-      name: "Hatchery",
+      name: "hatchery",
       supply: -1,
+    },
+    {
+      name: "evolution chamber",
+      supply: -1,
+    },
+    {
+      name: "spore crawler",
+      supply: -1,
+    },
+    {
+      name: "spine crawler",
+      supply: -1,
+    },
+    {
+      name: "roach warren",
+      supply: -1,
+    },
+    {
+      name: "baneling nest",
+      supply: -1,
+    },
+    {
+      name: "lair",
+      supply: 0,
+    },
+    {
+      name: "spire",
+      supply: -1,
+    },
+    {
+      name: "hydralisk den",
+      supply: -1,
+    },
+    {
+      name: "nydus network",
+      supply: -1,
+    },
+    {
+      name: "infestion pit",
+      supply: -1,
+    },
+    {
+      name: "hive",
+      supply: 0,
+    },
+    {
+      name: "ultralisk cavern",
+      supply: -1,
+    },
+    {
+      name: "greater spire",
+      supply: 0,
     },
   ],
   p: [],
@@ -165,7 +252,7 @@ const SubmitBuild: NextPage = () => {
               className="h-20 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             ></textarea>
           </fieldset>
-          <fieldset className="flex w-full flex-row gap-4">
+          <fieldset className="flex w-full h-auto pb-12 flex-row gap-4">
             <div className="w-1/2">
               <label
                 htmlFor="build"
@@ -178,7 +265,7 @@ const SubmitBuild: NextPage = () => {
                 value={build}
                 onChange={(e) => setBuildOrder(e.target.value)}
                 id="build"
-                className="h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               />
             </div>
             <div className="flex w-1/2 gap-8">
