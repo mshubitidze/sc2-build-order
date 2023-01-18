@@ -17,9 +17,7 @@ export const Badge = ({ variant, text }: { variant: Variant; text: string }) => 
   };
 
   return (
-    <span
-      className={classNames("mr-2 rounded px-2.5 py-1 text-xs font-semibold", styles[variant])}
-    >
+    <span className={classNames("mr-2 rounded px-2.5 py-1 text-xs font-semibold", styles[variant])}>
       {text}
     </span>
   );
