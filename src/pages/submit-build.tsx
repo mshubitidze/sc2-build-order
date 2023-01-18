@@ -3,10 +3,46 @@ import Head from "next/head";
 import { api } from "../utils/api";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { buildTypes, capitalize } from "./races/[raceName]/match-ups/[opponentRace]";
-import { Form } from "../components/Form";
+import { buildTypes, capitalize } from "./matchups/[matchupName]";
 
-export const matchUps = ["ZvT", "ZvP", "ZvZ", "PvT", "PvP", "PvZ", "TvT", "TvP", "TvZ"];
+export const matchUps = ["ZvT", "PvT", "TvT", "ZvP", "PvP", "TvP", "ZvZ", "PvZ", "TvZ"];
+
+type races = "z" | "p" | "t";
+
+type TStep = {
+  name: string;
+  supply: number;
+};
+
+const units: Record<races, TStep[]> = {
+  z: [
+    {
+      name: "Drone",
+      supply: 1,
+    },
+  ],
+  p: [],
+  t: [],
+};
+
+const structures: Record<races, TStep[]> = {
+  z: [
+    {
+      name: "Spawning Pool",
+      supply: -1,
+    },
+    {
+      name: "Extractor",
+      supply: -1,
+    },
+    {
+      name: "Hatchery",
+      supply: -1,
+    },
+  ],
+  p: [],
+  t: [],
+};
 
 const SubmitBuild: NextPage = () => {
   const createBuildOrderMutation = api.builds.createBuild.useMutation();
@@ -17,6 +53,7 @@ const SubmitBuild: NextPage = () => {
   const [author, setAuthor] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [supply, setSupply] = useState(12);
   const router = useRouter();
 
   const handleSubmitBuildOrder = async (e: React.FormEvent) => {
@@ -32,6 +69,14 @@ const SubmitBuild: NextPage = () => {
     router.push("/");
   };
 
+  function addStepToBuildOrder(stepName: TStep) {
+    if (build === "") setBuildOrder(`${supply}` + " " + stepName.name);
+    else setBuildOrder(build + "\n" + `${supply}` + " " + stepName.name);
+    setSupply(supply + stepName.supply);
+  }
+
+  const race = matchUp[0];
+
   return (
     <>
       <Head>
@@ -42,7 +87,7 @@ const SubmitBuild: NextPage = () => {
 
       <main className="flex min-h-screen flex-col items-center justify-center gap-16 py-12 text-black dark:bg-gray-800 dark:text-white">
         <h1 className="text-4xl">Submit a Build Order</h1>
-        <form className="flex flex-col gap-4" onSubmit={handleSubmitBuildOrder}>
+        <form className="flex w-11/12 flex-col gap-4" onSubmit={handleSubmitBuildOrder}>
           <div className="flex flex-row justify-start gap-8">
             <fieldset className="flex flex-col gap-2 self-center">
               <label
@@ -120,20 +165,44 @@ const SubmitBuild: NextPage = () => {
               className="h-20 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             ></textarea>
           </fieldset>
-          <fieldset className="w-full">
-            <label
-              htmlFor="build"
-              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Your Build
-            </label>
-            <textarea
-              required
-              value={build}
-              onChange={(e) => setBuildOrder(e.target.value)}
-              id="build"
-              className="h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-            />
+          <fieldset className="flex w-full flex-row gap-4">
+            <div className="w-1/2">
+              <label
+                htmlFor="build"
+                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Your Build
+              </label>
+              <textarea
+                required
+                value={build}
+                onChange={(e) => setBuildOrder(e.target.value)}
+                id="build"
+                className="h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex w-1/2 gap-8">
+              <div className="flex flex-col gap-4">
+                <h2 className="text-2xl">Units</h2>
+                {units[race as races].map((unit: TStep) => (
+                  <button key={unit.name} type="button" onClick={() => addStepToBuildOrder(unit)}>
+                    {unit.name}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-col gap-4">
+                <h2 className="text-2xl">Structures</h2>
+                {structures[race as races].map((structure: TStep) => (
+                  <button
+                    key={structure.name}
+                    type="button"
+                    onClick={() => addStepToBuildOrder(structure)}
+                  >
+                    {structure.name}
+                  </button>
+                ))}
+              </div>
+            </div>
           </fieldset>
           <button className="w-1/2 self-center rounded-lg border border-blue-700 px-5 py-2.5 text-center text-sm font-medium text-blue-700 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-600 dark:hover:text-white dark:focus:ring-blue-800">
             Submit

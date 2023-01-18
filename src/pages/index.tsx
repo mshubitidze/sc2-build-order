@@ -17,7 +17,7 @@ const Home: NextPage = () => {
           <Link className="link" href="/submit-build">
             Submit a New Build
           </Link>
-          <Link className="link" href="/races">
+          <Link className="link" href="/matchups">
             View Builds
           </Link>
         </div>

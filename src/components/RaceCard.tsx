@@ -1,34 +1,49 @@
 import Link from "next/link";
 
 type RaceCardType = {
-  raceImageSrc: string;
-  raceName: string;
+  yourRaceImgSrc: string;
+  opponentRaceImgSrc: string;
+  matchupName: string;
   href: string;
-  isOpponent?: boolean;
 };
 
-export const RaceCard = ({ raceImageSrc, raceName, href, isOpponent = false }: RaceCardType) => {
-  const buttonStyle = isOpponent
-    ? "bg-red-700 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 hover:bg-red-800"
-    : "bg-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 hover:bg-blue-800";
-
+export const RaceCard = ({
+  yourRaceImgSrc,
+  opponentRaceImgSrc,
+  matchupName,
+  href,
+}: RaceCardType) => {
   return (
-    <div className="max-w-xs rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800">
-      <Link href={href}>
-        <img className="rounded-t-lg" src={raceImageSrc} alt={raceName} />
-      </Link>
-      <div className="p-5">
+    <Link
+      href={href}
+      className="space-between flex max-w-xs flex-col items-center rounded-lg bg-black shadow-md"
+    >
+      <div className="flex flex-row items-center gap-3 p-4">
+        <Link href={href}>
+          <img
+            className="h-full w-full rounded-tl-lg"
+            src={yourRaceImgSrc}
+            alt={matchupName.split(" vs ")[0]}
+          />
+        </Link>
+        VS
+        <Link href={href}>
+          <img
+            className="h-full w-full rounded-tr-lg"
+            src={opponentRaceImgSrc}
+            alt={matchupName.split(" vs ")[1]}
+          />
+        </Link>
+      </div>
+      <div className="w-full">
         <Link
           href={href}
-          className={
-            `inline-flex items-center rounded-lg px-3 py-2 text-center text-sm font-medium text-white focus:outline-none focus:ring-4` +
-            buttonStyle
-          }
+          className="text-md inline-flex w-full items-center justify-center rounded-b-lg bg-gradient-to-r from-blue-900 to-red-900 px-3 py-2 text-center font-medium text-white focus:outline-none focus:ring-4"
         >
-          {raceName}
+          {matchupName}
           <svg
             aria-hidden="true"
-            className="ml-2 -mr-1 h-4 w-4"
+            className="ml-2 -mr-1 h-10 w-4"
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -41,6 +56,6 @@ export const RaceCard = ({ raceImageSrc, raceName, href, isOpponent = false }: R
           </svg>
         </Link>
       </div>
-    </div>
+    </Link>
   );
 };

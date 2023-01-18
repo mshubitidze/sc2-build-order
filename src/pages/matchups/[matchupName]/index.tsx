@@ -4,11 +4,11 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Variant, Badge } from "../../../../../components/Badge";
-import { Form } from "../../../../../components/Form";
-import { Input } from "../../../../../components/Input";
-import { Label } from "../../../../../components/Label";
-import { api } from "../../../../../utils/api";
+import { Variant, Badge } from "../../../components/Badge";
+import { Form } from "../../../components/Form";
+import { Input } from "../../../components/Input";
+import { Label } from "../../../components/Label";
+import { api } from "../../../utils/api";
 
 export const macroBuildType = "macro";
 export const timingBuildType = "timing attack";
@@ -78,10 +78,14 @@ const FindBuildsPage: NextPage = () => {
   const router = useRouter();
   const [search, setSearch] = useState("");
 
-  const { opponentRace = "", raceName = "" } = useRouter().query as {
-    opponentRace: string;
-    raceName: string;
+  const { matchupName = "" } = useRouter().query as {
+    matchupName: string;
   };
+
+  const raceName =
+    matchupName.charAt(0) == "z" ? "Zerg" : matchupName.charAt(0) == "p" ? "Protoss" : "Terran";
+  const opponentRace =
+    matchupName.charAt(2) == "z" ? "Zerg" : matchupName.charAt(2) == "p" ? "Protoss" : "Terran";
 
   const builds = api.builds.getBuildsByMatchUp.useQuery(
     {
@@ -129,9 +133,9 @@ const FindBuildsPage: NextPage = () => {
             </fieldset>
 
             <fieldset>
-              <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+              <Label htmlFor="buildType">
                 Build Type
-              </label>
+              </Label>
               <ul className="items-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                 {["all", ...buildTypes].map((buildType, idx, arr) => (
                   <li
@@ -166,7 +170,7 @@ const FindBuildsPage: NextPage = () => {
           </Form>
 
           <section className="flex w-full flex-col gap-4">
-            <h2 className="text-2xl text-white">Matching Builds</h2>
+            <h2 className="text-2xl text-white">Matching Builds ({filteredBuilds.length})</h2>
             <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredBuilds.map((build) => (
                 <BuildCard key={build.id} build={build} />
