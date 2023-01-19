@@ -1,4 +1,4 @@
-import type { BuildOrder } from "@prisma/client";
+import type { BuildOrder } from "@prisma/client"
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { Form } from "../../../components/Form";
 import { Input } from "../../../components/Input";
 import { Label } from "../../../components/Label";
 import { api } from "../../../utils/api";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 export const macroBuildType = "macro";
 export const timingBuildType = "timing attack";
@@ -28,11 +29,9 @@ function BuildCard({ build }: { build: BuildOrder }) {
   return (
     <div className="flex max-w-sm flex-col justify-between rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
       <div>
-        <a href="#">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {build.title}
-          </h5>
-        </a>
+        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          {build.title}
+        </h5>
         <p className="mb-3 flex gap-2 font-normal text-gray-700 dark:text-gray-400">
           {build.description?.substring(0, 100) + "..."}
         </p>
@@ -44,25 +43,31 @@ function BuildCard({ build }: { build: BuildOrder }) {
           Created by {" " + build.author}
         </p>
       </div>
-      <Link
-        href={`/builds/${build.id}`}
-        className="inline-flex w-fit items-center whitespace-nowrap rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        View Build
-        <svg
-          aria-hidden="true"
-          className="ml-2 -mr-1 h-4 w-4"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
+      <div className="flex flex-row items-center justify-between">
+        <Link
+          href={`/builds/${build.id}`}
+          className="inline-flex w-fit items-center whitespace-nowrap rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
-          <path
-            fillRule="evenodd"
-            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-            clipRule="evenodd"
-          ></path>
-        </svg>
-      </Link>
+          View Build
+          <svg
+            aria-hidden="true"
+            className="ml-2 -mr-1 h-4 w-4"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+        </Link>
+        <div className="flex flex-row justify-around gap-2 items-center text-white">
+          <VisibilityIcon />
+          <p>{build.views}</p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -73,8 +78,12 @@ export const capitalize = (s: string) =>
     .map((x) => x.charAt(0).toUpperCase() + x.slice(1))
     .join(" ");
 
+type EditableBuildOrderFields = Pick<BuildOrder, "description" | "author" | "title">;
+
+const ALL_BUILD_TYPES = "all";
+
 const FindBuildsPage: NextPage = () => {
-  const [selectedBuildType, setSelectedBuildType] = useState("all");
+  const [selectedBuildType, setSelectedBuildType] = useState(ALL_BUILD_TYPES);
   const router = useRouter();
   const [search, setSearch] = useState("");
 
@@ -104,11 +113,15 @@ const FindBuildsPage: NextPage = () => {
   const lowerCaseSearch = search.toLocaleLowerCase();
 
   const filteredBuilds = (builds.data ?? [])
-    .filter((build) => (selectedBuildType === "all" ? true : build.style === selectedBuildType))
+    .filter((build) =>
+      selectedBuildType === ALL_BUILD_TYPES ? true : build.style === selectedBuildType
+    )
     .filter((build) =>
       lowerCaseSearch !== ""
         ? ["author", "title", "description"].some((key) =>
-            ((build as Record<string, string>)[key] ?? "").toLowerCase().includes(lowerCaseSearch)
+            ((build as EditableBuildOrderFields)[key as keyof EditableBuildOrderFields] ?? "")
+              .toLowerCase()
+              .includes(lowerCaseSearch)
           )
         : true
     );
@@ -133,11 +146,9 @@ const FindBuildsPage: NextPage = () => {
             </fieldset>
 
             <fieldset>
-              <Label htmlFor="buildType">
-                Build Type
-              </Label>
+              <Label htmlFor="buildType">Build Type</Label>
               <ul className="items-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                {["all", ...buildTypes].map((buildType, idx, arr) => (
+                {[ALL_BUILD_TYPES, ...buildTypes].map((buildType, idx, arr) => (
                   <li
                     key={buildType}
                     className={

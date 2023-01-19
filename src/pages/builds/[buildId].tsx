@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { api } from "../../utils/api";
+import { type TBuildStep } from "../submit-build";
 
 const Build: NextPage = () => {
   const router = useRouter();
@@ -17,10 +18,20 @@ const Build: NextPage = () => {
     }
   );
 
+  const buildSteps = build.data?.buildSteps as TBuildStep[];
+
+  const { mutate } = api.builds.incrementBuildOrderView.useMutation();
+
+  useEffect(() => {
+    mutate({ buildId });
+  }, [mutate, buildId]);
+
   useEffect(() => {
     if (!router.isReady) return;
     build.refetch();
   }, [router.isReady, build]);
+
+  const numberOfViews = build.data?.views;
 
   return (
     <>
@@ -36,8 +47,17 @@ const Build: NextPage = () => {
             {build.data?.title}
           </h1>
         </div>
+        <span className="text-md text-gray-900 dark:text-white">PageViews: {numberOfViews}</span>
         <pre className="text-md text-gray-900 dark:text-white">{build.data?.description}</pre>
-        <p className="text-sm text-gray-900 dark:text-white">{build.data?.build}</p>
+        <div className="text-sm text-gray-900 dark:text-white">
+          {buildSteps?.map((buildStep) => (
+            <>
+              <div>{buildStep.supply}</div>
+              <div>{buildStep.unit}</div>
+              {buildStep.note && <div>{buildStep.note}</div>}
+            </>
+          ))}
+        </div>
       </main>
     </>
   );

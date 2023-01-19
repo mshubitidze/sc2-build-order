@@ -4,150 +4,33 @@ import { api } from "../utils/api";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { buildTypes, capitalize } from "./matchups/[matchupName]";
+import { units, structures, type races, type TStep } from "../data/data";
 
 export const matchUps = ["ZvT", "PvT", "TvT", "ZvP", "PvP", "TvP", "ZvZ", "PvZ", "TvZ"];
 
-type races = "z" | "p" | "t";
-
-type TStep = {
-  name: string;
+export type TBuildStep = {
   supply: number;
-};
-
-const units: Record<races, TStep[]> = {
-  z: [
-    {
-      name: "drone",
-      supply: 1,
-    },
-    {
-      name: "zergling",
-      supply: 1,
-    },
-    {
-      name: "roach",
-      supply: 2,
-    },
-    {
-      name: "overlord",
-      supply: 0,
-    },
-    {
-      name: "infestor",
-      supply: 2,
-    },
-    {
-      name: "ultralisk",
-      supply: 6,
-    },
-    {
-      name: "baneling",
-      supply: 0,
-    },
-    {
-      name: "queen",
-      supply: 2,
-    },
-    { name: "hydralisk", supply: 2 },
-    { name: "mutalisk", supply: 2 },
-    { name: "corruptor", supply: 2 },
-    { name: "swarm host", supply: 3 },
-    { name: "viper", supply: 3 },
-    { name: "brood lord", supply: 2 },
-    { name: "overseer", supply: 0 },
-  ],
-  p: [],
-  t: [],
-};
-
-const structures: Record<races, TStep[]> = {
-  z: [
-    {
-      name: "spawning pool",
-      supply: -1,
-    },
-    {
-      name: "extractor",
-      supply: -1,
-    },
-    {
-      name: "hatchery",
-      supply: -1,
-    },
-    {
-      name: "evolution chamber",
-      supply: -1,
-    },
-    {
-      name: "spore crawler",
-      supply: -1,
-    },
-    {
-      name: "spine crawler",
-      supply: -1,
-    },
-    {
-      name: "roach warren",
-      supply: -1,
-    },
-    {
-      name: "baneling nest",
-      supply: -1,
-    },
-    {
-      name: "lair",
-      supply: 0,
-    },
-    {
-      name: "spire",
-      supply: -1,
-    },
-    {
-      name: "hydralisk den",
-      supply: -1,
-    },
-    {
-      name: "nydus network",
-      supply: -1,
-    },
-    {
-      name: "infestion pit",
-      supply: -1,
-    },
-    {
-      name: "hive",
-      supply: 0,
-    },
-    {
-      name: "ultralisk cavern",
-      supply: -1,
-    },
-    {
-      name: "greater spire",
-      supply: 0,
-    },
-  ],
-  p: [],
-  t: [],
+  unit: string;
+  note?: string;
 };
 
 const SubmitBuild: NextPage = () => {
   const createBuildOrderMutation = api.builds.createBuild.useMutation();
 
   const [matchUp, setMatchUp] = useState("zvt");
-  const [build, setBuildOrder] = useState("");
   const [style, setStyle] = useState("cheese");
   const [author, setAuthor] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [supply, setSupply] = useState(12);
+  const [buildSteps, setBuildSteps] = useState<TBuildStep[]>([]);
   const router = useRouter();
 
   const handleSubmitBuildOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     await createBuildOrderMutation.mutateAsync({
       matchUp,
-      build,
+      buildSteps,
       style,
       author,
       title,
@@ -157,12 +40,26 @@ const SubmitBuild: NextPage = () => {
   };
 
   function addStepToBuildOrder(stepName: TStep) {
-    if (build === "") setBuildOrder(`${supply}` + " " + stepName.name);
-    else setBuildOrder(build + "\n" + `${supply}` + " " + stepName.name);
+    setBuildSteps([
+      ...buildSteps,
+      {
+        supply,
+        unit: stepName.name,
+        note: "",
+      },
+    ]);
     setSupply(supply + stepName.supply);
   }
 
   const race = matchUp[0];
+
+  function handleNoteUpdated(newNoteValue: string, currentBuildStep: TBuildStep) {
+    setBuildSteps(
+      buildSteps.map((buildStep) =>
+        buildStep === currentBuildStep ? { ...buildStep, note: newNoteValue } : buildStep
+      )
+    );
+  }
 
   return (
     <>
@@ -175,7 +72,7 @@ const SubmitBuild: NextPage = () => {
       <main className="flex min-h-screen flex-col items-center justify-center gap-16 py-12 text-black dark:bg-gray-800 dark:text-white">
         <h1 className="text-4xl">Submit a Build Order</h1>
         <form className="flex w-11/12 flex-col gap-4" onSubmit={handleSubmitBuildOrder}>
-          <div className="flex flex-row justify-start gap-8">
+          <div className="flex flex-row w-3/4 justify-start gap-8">
             <fieldset className="flex flex-col gap-2 self-center">
               <label
                 className="text-sm font-medium text-gray-900 dark:text-white"
@@ -197,7 +94,7 @@ const SubmitBuild: NextPage = () => {
                 ))}
               </select>
             </fieldset>
-            <fieldset className="flex flex-col gap-2 self-center">
+            <fieldset className="flex flex-col gap-2">
               <label className="text-sm font-medium text-gray-900 dark:text-white" htmlFor="style">
                 Style
               </label>
@@ -215,7 +112,7 @@ const SubmitBuild: NextPage = () => {
                 ))}
               </select>
             </fieldset>
-            <fieldset className="flex w-1/2 flex-col gap-2 self-center">
+            <fieldset className="flex flex-col w-1/2 gap-2 self-center">
               <label htmlFor="author" className="text-sm font-medium text-gray-900 dark:text-white">
                 Author
               </label>
@@ -223,7 +120,7 @@ const SubmitBuild: NextPage = () => {
                 onChange={(e) => setAuthor(e.target.value)}
                 type="text"
                 id="author"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               />
             </fieldset>
             <fieldset className="flex w-1/2 flex-col gap-2 self-center">
@@ -238,7 +135,7 @@ const SubmitBuild: NextPage = () => {
               />
             </fieldset>
           </div>
-          <fieldset className="flex w-full flex-col gap-2 self-center">
+          <fieldset className="flex w-3/4 flex-col gap-2">
             <label
               htmlFor="description"
               className="text-sm font-medium text-gray-900 dark:text-white"
@@ -252,42 +149,79 @@ const SubmitBuild: NextPage = () => {
               className="h-20 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             ></textarea>
           </fieldset>
-          <fieldset className="flex w-full h-auto pb-12 flex-row gap-4">
+          <fieldset className="flex h-auto w-full flex-row gap-4 pb-12">
             <div className="w-1/2">
-              <label
-                htmlFor="build"
-                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Your Build
-              </label>
-              <textarea
-                required
-                value={build}
-                onChange={(e) => setBuildOrder(e.target.value)}
-                id="build"
-                className="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              />
+              <div className="relative overflow-x-auto">
+                <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                  <caption className="bg-white p-5 text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white">
+                    Your Build
+                  </caption>
+                  <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                    <tr>
+                      <th scope="col" className="px-6 py-3">
+                        Supply
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Units / Structures
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Note
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {buildSteps.map((buildStep, idx) => (
+                      <tr
+                        key={buildStep.unit + idx}
+                        className="border-b bg-white dark:border-gray-700 dark:bg-gray-800"
+                      >
+                        <td className="px-6 py-4">{buildStep.supply}</td>
+                        <td className="px-6 py-4">{buildStep.unit}</td>
+                        <td className="px-6 py-4">
+                          <input
+                            onChange={(e) => handleNoteUpdated(e.target.value, buildStep)}
+                            type="text"
+                            id="note"
+                            placeholder="Add Note"
+                            className="block w-full border border-transparent focus:outline-none bg-transparent py-2.5 text-sm placeholder-gray-600"
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div className="flex w-1/2 gap-8">
+            <div className="flex w-1/2 gap-8 p-5">
               <div className="flex flex-col gap-4">
                 <h2 className="text-2xl">Units</h2>
-                {units[race as races].map((unit: TStep) => (
-                  <button key={unit.name} type="button" onClick={() => addStepToBuildOrder(unit)}>
-                    {unit.name}
-                  </button>
-                ))}
+                <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                  {units[race as races].map((unit: TStep) => (
+                    <button
+                      key={unit.name}
+                      type="button"
+                      className="mr-2 mb-2 whitespace-nowrap rounded-lg bg-green-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                      onClick={() => addStepToBuildOrder(unit)}
+                    >
+                      {unit.name}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="flex flex-col gap-4">
                 <h2 className="text-2xl">Structures</h2>
-                {structures[race as races].map((structure: TStep) => (
-                  <button
-                    key={structure.name}
-                    type="button"
-                    onClick={() => addStepToBuildOrder(structure)}
-                  >
-                    {structure.name}
-                  </button>
-                ))}
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                  {structures[race as races].map((structure: TStep) => (
+                    <button
+                      key={structure.name}
+                      type="button"
+                      className="mb-2 whitespace-nowrap rounded-lg bg-purple-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
+                      onClick={() => addStepToBuildOrder(structure)}
+                    >
+                      {structure.name}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </fieldset>
