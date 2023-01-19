@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image"
 
 type RaceCardType = {
   yourRaceImgSrc: string;
@@ -20,18 +21,18 @@ export const RaceCard = ({
     >
       <div className="flex flex-row items-center gap-3 p-4">
         <Link href={href}>
-          <img
+          <Image
             className="h-full w-full rounded-tl-lg"
             src={yourRaceImgSrc}
-            alt={matchupName.split(" vs ")[0]}
+            alt={matchupName.split(" vs ")[0] ?? ""}
           />
         </Link>
         VS
         <Link href={href}>
-          <img
+          <Image
             className="h-full w-full rounded-tr-lg"
             src={opponentRaceImgSrc}
-            alt={matchupName.split(" vs ")[1]}
+            alt={matchupName.split(" vs ")[1] ?? ""}
           />
         </Link>
       </div>
