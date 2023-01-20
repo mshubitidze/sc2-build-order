@@ -152,8 +152,8 @@ const SubmitBuild: NextPage = () => {
           <fieldset className="flex h-auto w-full flex-row gap-4 pb-12">
             <div className="w-1/2">
               <div className="relative overflow-x-auto">
-                <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                  <caption className="bg-white p-5 text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white">
+                <table className="w-full text-center text-sm text-gray-500 dark:text-gray-400">
+                  <caption className="bg-white py-5 text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white">
                     Your Build
                   </caption>
                   <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-200">
@@ -178,12 +178,11 @@ const SubmitBuild: NextPage = () => {
                         <td className="px-6 py-4">{buildStep.supply}</td>
                         <td className="px-6 py-4">{buildStep.unit}</td>
                         <td className="px-6 py-4">
-                          <input
+                          <textarea
                             onChange={(e) => handleNoteUpdated(e.target.value, buildStep)}
-                            type="text"
                             id="note"
                             placeholder="Add Note"
-                            className="block w-full border border-transparent focus:outline-none bg-transparent py-2.5 text-sm placeholder-gray-600"
+                            className="block w-full p-2 focus:outline-none bg-transparent rounded-lg py-2.5 text-sm placeholder-gray-600"
                           />
                         </td>
                       </tr>

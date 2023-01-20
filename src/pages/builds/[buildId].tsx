@@ -19,7 +19,7 @@ const Build: NextPage = () => {
     }
   );
 
-  const { mutate } = api.builds.incrementBuildOrderView.useMutation() ?? 1;
+  const { mutate } = api.builds.incrementBuildOrderView.useMutation();
 
   useEffect(() => {
     mutate({ buildId });
@@ -45,9 +45,9 @@ const Build: NextPage = () => {
           <h1 className="text-6xl font-semibold text-gray-900 dark:text-white">
             {build.data?.title}
           </h1>
-        <div className="text-4xl items-center flex flex-row gap-2 text-gray-900 dark:text-white">
-          <VisibilityIcon /> <div>{numberOfViews}</div>
-        </div>
+          <div className="flex flex-row items-center gap-2 text-4xl text-gray-900 dark:text-white">
+            <VisibilityIcon /> <div>{numberOfViews}</div>
+          </div>
         </div>
         <pre className="text-lg text-gray-900 dark:text-white">{build.data?.description}</pre>
         <div className="text-sm text-gray-900 dark:text-white">

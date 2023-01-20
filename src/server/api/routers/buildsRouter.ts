@@ -2,12 +2,20 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
+const buildStepsSchema = z.array(
+  z.object({
+    supply: z.number(),
+    unit: z.string(),
+    note: z.string().optional(),
+  })
+);
+
 export const buildsRouter = createTRPCRouter({
   createBuild: publicProcedure
     .input(
       z.object({
         matchUp: z.string(),
-        buildSteps: z.any(),
+        buildSteps: buildStepsSchema,
         style: z.string(),
         author: z.string().optional(),
         title: z.string().optional(),
@@ -18,7 +26,9 @@ export const buildsRouter = createTRPCRouter({
       const build = await ctx.prisma.buildOrder.create({
         data: {
           matchUp: input.matchUp,
-          buildSteps: input.buildSteps,
+          buildSteps: {
+            create: input.buildSteps,
+          },
           style: input.style,
           author: input.author,
           title: input.title,
@@ -45,6 +55,9 @@ export const buildsRouter = createTRPCRouter({
       const build = await ctx.prisma.buildOrder.findUnique({
         where: {
           id: input.buildId,
+        },
+        include: {
+          buildSteps: true,
         },
       });
 

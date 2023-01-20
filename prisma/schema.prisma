@@ -8,12 +8,21 @@ datasource db {
 }
 
 model BuildOrder {
-  id          String @id @default(cuid())
+  id          String      @id @default(cuid())
   matchUp     String
-  style       String @default("Macro")
-  author      String @default("Anonymous")
-  description String @default("No Description")
-  title       String @default("No Title")
-  views       Int    @default(0)
-  buildSteps  Json[]
+  style       String      @default("Macro")
+  author      String      @default("Anonymous")
+  description String      @default("No Description")
+  title       String      @default("No Title")
+  views       Int         @default(0)
+  buildSteps  BuildStep[]
+}
+
+model BuildStep {
+  id           String      @id @default(cuid())
+  supply       Int
+  unit         String
+  note         String?
+  BuildOrder   BuildOrder? @relation(fields: [buildOrderId], references: [id])
+  buildOrderId String?
 }
