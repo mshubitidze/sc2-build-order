@@ -18,7 +18,7 @@ const SubmitBuild: NextPage = () => {
   const createBuildOrderMutation = api.builds.createBuild.useMutation();
 
   const [matchUp, setMatchUp] = useState("zvt");
-  const [style, setStyle] = useState("cheese");
+  const [style, setStyle] = useState("macro");
   const [author, setAuthor] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
