@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { api } from "../../utils/api";
 import { type TBuildStep } from "../submit-build";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const Build: NextPage = () => {
   const router = useRouter();
@@ -18,9 +19,7 @@ const Build: NextPage = () => {
     }
   );
 
-  const buildSteps = build.data?.buildSteps as TBuildStep[];
-
-  const { mutate } = api.builds.incrementBuildOrderView.useMutation();
+  const { mutate } = api.builds.incrementBuildOrderView.useMutation() ?? 1;
 
   useEffect(() => {
     mutate({ buildId });
@@ -42,21 +41,46 @@ const Build: NextPage = () => {
       </Head>
 
       <main className="container m-auto flex flex-col gap-8 bg-gray-800 pt-12">
-        <div className="flex flex-row items-start gap-2">
-          <h1 className="text-4xl font-semibold text-gray-900 dark:text-white">
+        <div className="flex flex-row items-center gap-10">
+          <h1 className="text-6xl font-semibold text-gray-900 dark:text-white">
             {build.data?.title}
           </h1>
+        <div className="text-4xl items-center flex flex-row gap-2 text-gray-900 dark:text-white">
+          <VisibilityIcon /> <div>{numberOfViews}</div>
         </div>
-        <span className="text-md text-gray-900 dark:text-white">PageViews: {numberOfViews}</span>
-        <pre className="text-md text-gray-900 dark:text-white">{build.data?.description}</pre>
+        </div>
+        <pre className="text-lg text-gray-900 dark:text-white">{build.data?.description}</pre>
         <div className="text-sm text-gray-900 dark:text-white">
-          {buildSteps?.map((buildStep) => (
-            <>
-              <div>{buildStep.supply}</div>
-              <div>{buildStep.unit}</div>
-              {buildStep.note && <div>{buildStep.note}</div>}
-            </>
-          ))}
+          <table className="min-w-[50vw] text-left text-sm text-gray-500 dark:text-gray-400">
+            <caption className="bg-white py-5 text-left text-3xl font-semibold text-gray-900 dark:bg-gray-800 dark:text-white">
+              Build Steps
+            </caption>
+            <thead className="bg-gray-50 text-xl uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  Supply
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Units / Structures
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Note
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {(build.data?.buildSteps as TBuildStep[])?.map((buildStep, idx) => (
+                <tr
+                  key={buildStep.unit + idx}
+                  className="border-b bg-white text-xl dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <td className="px-6 py-4">{buildStep.supply}</td>
+                  <td className="px-6 py-4">{buildStep.unit}</td>
+                  <td className="px-6 py-4">{buildStep.note ?? "No Note"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </main>
     </>
