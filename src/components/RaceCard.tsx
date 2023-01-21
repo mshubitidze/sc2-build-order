@@ -14,21 +14,19 @@ export const RaceCard = ({
   href,
 }: RaceCardType) => {
   return (
-    <div
-      className="space-between flex max-w-xs flex-col items-center rounded-lg bg-black shadow-md"
-    >
+    <div className="space-between flex max-w-xs flex-col items-center rounded-lg bg-black shadow-md">
       <div className="flex flex-row items-center gap-3 p-4">
-          <img
+        <img
           className="w-[120px] rounded-tl-lg"
-            src={yourRaceImgSrc}
-            alt={matchupName.split(" vs ")[0]}
-          />
+          src={yourRaceImgSrc}
+          alt={matchupName.split(" vs ")[0]}
+        />
         VS
-          <img
-            className="w-[120px] rounded-tr-lg"
-            src={opponentRaceImgSrc}
-            alt={matchupName.split(" vs ")[1]}
-          />
+        <img
+          className="w-[120px] rounded-tr-lg"
+          src={opponentRaceImgSrc}
+          alt={matchupName.split(" vs ")[1]}
+        />
       </div>
       <div className="w-full">
         <Link

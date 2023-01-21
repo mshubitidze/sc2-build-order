@@ -42,20 +42,23 @@ const Build: NextPage = () => {
 
       <main className="container m-auto flex flex-col gap-8 bg-gray-800 pt-12">
         <div className="flex flex-row items-center gap-10">
-          <h1 className="text-6xl font-semibold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
             {build.data?.title}
           </h1>
-          <div className="flex flex-row items-center gap-2 text-4xl text-gray-900 dark:text-white">
-            <VisibilityIcon /> <div>{numberOfViews}</div>
+          <div className="flex flex-row items-center gap-2 text-gray-900 dark:text-white">
+            <VisibilityIcon className="text-lg" />{" "}
+            <div className="text-lg">{numberOfViews}</div>
           </div>
         </div>
-        <pre className="text-lg text-gray-900 dark:text-white">{build.data?.description}</pre>
+        <pre className="text-lg text-gray-900 dark:text-white">
+          {build.data?.description}
+        </pre>
         <div className="text-sm text-gray-900 dark:text-white">
           <table className="min-w-[50vw] text-left text-sm text-gray-500 dark:text-gray-400">
-            <caption className="bg-white py-5 text-left text-3xl font-semibold text-gray-900 dark:bg-gray-800 dark:text-white">
+            <caption className="bg-white py-5 text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white">
               Build Steps
             </caption>
-            <thead className="bg-gray-50 text-xl uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+            <thead className="bg-gray-50 text-sm uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-200">
               <tr>
                 <th scope="col" className="px-6 py-3">
                   Supply
@@ -69,16 +72,18 @@ const Build: NextPage = () => {
               </tr>
             </thead>
             <tbody>
-              {(build.data?.buildSteps as TBuildStep[])?.map((buildStep, idx) => (
-                <tr
-                  key={buildStep.unit + idx}
-                  className="border-b bg-white text-xl dark:border-gray-700 dark:bg-gray-800"
-                >
-                  <td className="px-6 py-4">{buildStep.supply}</td>
-                  <td className="px-6 py-4">{buildStep.unit}</td>
-                  <td className="px-6 py-4">{buildStep.note ?? "No Note"}</td>
-                </tr>
-              ))}
+              {(build.data?.buildSteps as TBuildStep[])?.map(
+                (buildStep, idx) => (
+                  <tr
+                    key={buildStep.unit + idx}
+                    className="border-b bg-white text-sm dark:border-gray-700 dark:bg-gray-800"
+                  >
+                    <td className="px-6 py-4">{buildStep.supply}</td>
+                    <td className="px-6 py-4">{buildStep.unit}</td>
+                    <td className="px-6 py-4">{buildStep.note}</td>
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
         </div>

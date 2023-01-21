@@ -5,9 +5,18 @@ import { matchUps } from "../submit-build";
 
 const matchUpsObject = matchUps.map((matchUp) => {
   return {
-    yourRace: matchUp.charAt(0) === "Z" ? "Zerg" : matchUp.charAt(0) === "P" ? "Protoss" : "Terran",
+    yourRace:
+      matchUp.charAt(0) === "Z"
+        ? "Zerg"
+        : matchUp.charAt(0) === "P"
+        ? "Protoss"
+        : "Terran",
     opponentRace:
-      matchUp.charAt(2) === "Z" ? "Zerg" : matchUp.charAt(2) === "P" ? "Protoss" : "Terran",
+      matchUp.charAt(2) === "Z"
+        ? "Zerg"
+        : matchUp.charAt(2) === "P"
+        ? "Protoss"
+        : "Terran",
     matchup: matchUp.toLowerCase(),
   };
 });
@@ -30,7 +39,9 @@ const Races: NextPage = () => {
                 <RaceCard
                   href={`/matchups/${matchup.yourRace
                     .charAt(0)
-                    .toLowerCase()}v${matchup.opponentRace.charAt(0).toLowerCase()}`}
+                    .toLowerCase()}v${matchup.opponentRace
+                    .charAt(0)
+                    .toLowerCase()}`}
                   yourRaceImgSrc={`/${matchup.yourRace.toLowerCase()}.jpeg`}
                   opponentRaceImgSrc={`/${matchup.opponentRace.toLowerCase()}.jpeg`}
                   matchupName={`${matchup.yourRace} vs ${matchup.opponentRace}`}

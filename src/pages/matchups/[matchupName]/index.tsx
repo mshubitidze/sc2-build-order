@@ -1,4 +1,4 @@
-import type { BuildOrder } from "@prisma/client"
+import type { BuildOrder } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -15,7 +15,12 @@ export const macroBuildType = "macro";
 export const timingBuildType = "timing attack";
 export const allInBuildType = "all in";
 export const cheeseBuildType = "cheese";
-export const buildTypes = [macroBuildType, timingBuildType, allInBuildType, cheeseBuildType];
+export const buildTypes = [
+  macroBuildType,
+  timingBuildType,
+  allInBuildType,
+  cheeseBuildType,
+];
 
 function BuildCard({ build }: { build: BuildOrder }) {
   const badgeVariant: Variant =
@@ -63,7 +68,7 @@ function BuildCard({ build }: { build: BuildOrder }) {
             ></path>
           </svg>
         </Link>
-        <div className="flex flex-row justify-around gap-2 items-center text-white">
+        <div className="flex flex-row items-center justify-around gap-2 text-white">
           <VisibilityIcon />
           <p>{build.views}</p>
         </div>
@@ -78,7 +83,10 @@ export const capitalize = (s: string) =>
     .map((x) => x.charAt(0).toUpperCase() + x.slice(1))
     .join(" ");
 
-type EditableBuildOrderFields = Pick<BuildOrder, "description" | "author" | "title">;
+type EditableBuildOrderFields = Pick<
+  BuildOrder,
+  "description" | "author" | "title"
+>;
 
 const ALL_BUILD_TYPES = "all";
 
@@ -92,13 +100,23 @@ const FindBuildsPage: NextPage = () => {
   };
 
   const raceName =
-    matchupName.charAt(0) == "z" ? "Zerg" : matchupName.charAt(0) == "p" ? "Protoss" : "Terran";
+    matchupName.charAt(0) == "z"
+      ? "Zerg"
+      : matchupName.charAt(0) == "p"
+      ? "Protoss"
+      : "Terran";
   const opponentRace =
-    matchupName.charAt(2) == "z" ? "Zerg" : matchupName.charAt(2) == "p" ? "Protoss" : "Terran";
+    matchupName.charAt(2) == "z"
+      ? "Zerg"
+      : matchupName.charAt(2) == "p"
+      ? "Protoss"
+      : "Terran";
 
   const builds = api.builds.getBuildsByMatchUp.useQuery(
     {
-      matchUp: `${raceName.toLowerCase().charAt(0)}v${opponentRace.toLowerCase().charAt(0)}`,
+      matchUp: `${raceName.toLowerCase().charAt(0)}v${opponentRace
+        .toLowerCase()
+        .charAt(0)}`,
     },
     {
       enabled: false,
@@ -114,12 +132,18 @@ const FindBuildsPage: NextPage = () => {
 
   const filteredBuilds = (builds.data ?? [])
     .filter((build) =>
-      selectedBuildType === ALL_BUILD_TYPES ? true : build.style === selectedBuildType
+      selectedBuildType === ALL_BUILD_TYPES
+        ? true
+        : build.style === selectedBuildType
     )
     .filter((build) =>
       lowerCaseSearch !== ""
         ? ["author", "title", "description"].some((key) =>
-            ((build as EditableBuildOrderFields)[key as keyof EditableBuildOrderFields] ?? "")
+            (
+              (build as EditableBuildOrderFields)[
+                key as keyof EditableBuildOrderFields
+              ] ?? ""
+            )
               .toLowerCase()
               .includes(lowerCaseSearch)
           )
@@ -141,8 +165,14 @@ const FindBuildsPage: NextPage = () => {
         <div className="flex gap-12">
           <Form className="w-1/4">
             <fieldset>
-              <Label htmlFor="search">Search (By Name, Author, or Description)</Label>
-              <Input id="search" value={search} onChange={(e) => setSearch(e.target.value)} />
+              <Label htmlFor="search">
+                Search (By Name, Author, or Description)
+              </Label>
+              <Input
+                id="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </fieldset>
 
             <fieldset>
@@ -181,7 +211,9 @@ const FindBuildsPage: NextPage = () => {
           </Form>
 
           <section className="flex w-full flex-col gap-4">
-            <h2 className="text-2xl text-white">Matching Builds ({filteredBuilds.length})</h2>
+            <h2 className="text-2xl text-white">
+              Matching Builds ({filteredBuilds.length})
+            </h2>
             <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredBuilds.map((build) => (
                 <BuildCard key={build.id} build={build} />

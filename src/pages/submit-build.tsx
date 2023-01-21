@@ -6,7 +6,17 @@ import { useRouter } from "next/router";
 import { buildTypes, capitalize } from "./matchups/[matchupName]";
 import { units, structures, type races, type TStep } from "../data/data";
 
-export const matchUps = ["ZvT", "PvT", "TvT", "ZvP", "PvP", "TvP", "ZvZ", "PvZ", "TvZ"];
+export const matchUps = [
+  "ZvT",
+  "PvT",
+  "TvT",
+  "ZvP",
+  "PvP",
+  "TvP",
+  "ZvZ",
+  "PvZ",
+  "TvZ",
+];
 
 export type TBuildStep = {
   supply: number;
@@ -53,10 +63,15 @@ const SubmitBuild: NextPage = () => {
 
   const race = matchUp[0];
 
-  function handleNoteUpdated(newNoteValue: string, currentBuildStep: TBuildStep) {
+  function handleNoteUpdated(
+    newNoteValue: string,
+    currentBuildStep: TBuildStep
+  ) {
     setBuildSteps(
       buildSteps.map((buildStep) =>
-        buildStep === currentBuildStep ? { ...buildStep, note: newNoteValue } : buildStep
+        buildStep === currentBuildStep
+          ? { ...buildStep, note: newNoteValue }
+          : buildStep
       )
     );
   }
@@ -71,8 +86,11 @@ const SubmitBuild: NextPage = () => {
 
       <main className="flex min-h-screen flex-col items-center justify-center gap-16 py-12 text-black dark:bg-gray-800 dark:text-white">
         <h1 className="text-4xl">Submit a Build Order</h1>
-        <form className="flex w-11/12 flex-col gap-4" onSubmit={handleSubmitBuildOrder}>
-          <div className="flex flex-row w-3/4 justify-start gap-8">
+        <form
+          className="flex w-11/12 flex-col gap-4"
+          onSubmit={handleSubmitBuildOrder}
+        >
+          <div className="flex w-3/4 flex-row justify-start gap-8">
             <fieldset className="flex flex-col gap-2 self-center">
               <label
                 className="text-sm font-medium text-gray-900 dark:text-white"
@@ -95,7 +113,10 @@ const SubmitBuild: NextPage = () => {
               </select>
             </fieldset>
             <fieldset className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-900 dark:text-white" htmlFor="style">
+              <label
+                className="text-sm font-medium text-gray-900 dark:text-white"
+                htmlFor="style"
+              >
                 Style
               </label>
 
@@ -112,8 +133,11 @@ const SubmitBuild: NextPage = () => {
                 ))}
               </select>
             </fieldset>
-            <fieldset className="flex flex-col w-1/2 gap-2 self-center">
-              <label htmlFor="author" className="text-sm font-medium text-gray-900 dark:text-white">
+            <fieldset className="flex w-1/2 flex-col gap-2 self-center">
+              <label
+                htmlFor="author"
+                className="text-sm font-medium text-gray-900 dark:text-white"
+              >
                 Author
               </label>
               <input
@@ -124,7 +148,10 @@ const SubmitBuild: NextPage = () => {
               />
             </fieldset>
             <fieldset className="flex w-1/2 flex-col gap-2 self-center">
-              <label htmlFor="title" className="text-sm font-medium text-gray-900 dark:text-white">
+              <label
+                htmlFor="title"
+                className="text-sm font-medium text-gray-900 dark:text-white"
+              >
                 Title
               </label>
               <input
@@ -179,10 +206,12 @@ const SubmitBuild: NextPage = () => {
                         <td className="px-6 py-4">{buildStep.unit}</td>
                         <td className="px-6 py-4">
                           <textarea
-                            onChange={(e) => handleNoteUpdated(e.target.value, buildStep)}
+                            onChange={(e) =>
+                              handleNoteUpdated(e.target.value, buildStep)
+                            }
                             id="note"
                             placeholder="Add Note"
-                            className="block w-full p-2 focus:outline-none bg-transparent rounded-lg py-2.5 text-sm placeholder-gray-600"
+                            className="block w-full rounded-lg bg-transparent p-2 py-2.5 text-sm placeholder-gray-600 focus:outline-none"
                           />
                         </td>
                       </tr>
